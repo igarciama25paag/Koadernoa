@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Koadernoa</string>
+
+    <string name="dialog_create">Sortu</string>
+    <string name="dialog_cancel">Itxi</string>
+    <string name="new_note_dialog_question">Sartu notaren izena</string>
+    <string name="new_note_dialog_hint">Izena…</string>
+</resources>
