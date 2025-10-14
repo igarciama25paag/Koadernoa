@@ -2,7 +2,6 @@ package com.igmata.koadernoa
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -11,13 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.igmata.koadernoa.databinding.ActivityMainBinding
-import java.io.FileWriter
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var notesManager: NotesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +28,10 @@ class MainActivity : AppCompatActivity() {
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        notesManager = NotesManager(this)
 
         toolBar()
-        cardView()
+        updateCardView()
     }
 
     fun toolBar() {
@@ -45,7 +44,10 @@ class MainActivity : AppCompatActivity() {
                 .setView(editText)
                 .setPositiveButton(getString(R.string.dialog_create)) { dialog, _ ->
                     val name = editText.text.toString().trim()
-                    if (name.isNotEmpty()) addNewNote(name)
+                    if (name.isNotEmpty()) {
+                        notesManager.addNewNote(name)
+                        updateCardView()
+                    }
                 }
                 .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ ->
                     dialog.dismiss()
@@ -54,33 +56,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun cardView() {
-        val json = assets.open("notes.json")
-            .bufferedReader()
-            .use { it.readText() }
-
-        if(!json.isEmpty())
-            binding.recyclerView.adapter = NoteAdapter(Gson().fromJson(json, Array<Note>::class.java))
-        else
-            Toast.makeText(this, "No notes file found", Toast.LENGTH_LONG).show()
-    }
-
-    fun addNewNote(name: String) {
-        val json = assets.open("notes.json")
-            .bufferedReader()
-            .use { it.readText() }
-        val notes = ArrayList(Gson().fromJson(json, Array<Note>::class.java).toList())
-
-        var newID = 1
-        for (l in notes) if(l.id >= newID) newID = l.id + 1
-        notes.add(Note(newID, name, ""))
-
-        var jsonString = Gson().toJson(notes)
-
-        println(notes)
-
-        openFileOutput("notes.json", Context.MODE_PRIVATE).use {
-            it.write(jsonString.toByteArray())
-        }
+    fun updateCardView() {
+        try {
+            binding.recyclerView.adapter = NoteAdapter(notesManager.getJsonArray())
+        } catch (e: Exception) {  }
     }
 }

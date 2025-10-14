@@ -41,10 +41,19 @@ class NoteAdapter(private val note: Array<Note>) : RecyclerView.Adapter<NoteAdap
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
+        val context = viewHolder.itemView.context
+        val notesManager = NotesManager(context)
+
+        val id = note[position].id
         viewHolder.title.text = note[position].title
         viewHolder.description.text = note[position].content
+
         viewHolder.background.setOnClickListener {
-            viewHolder.itemView.context.startActivity(Intent(viewHolder.itemView.context, NotepadActivity::class.java))
+            context.startActivity(Intent(viewHolder.itemView.context, NotepadActivity::class.java))
+        }
+        viewHolder.background.setOnLongClickListener {
+            notesManager.deleteNote(id)
+            true
         }
     }
 
