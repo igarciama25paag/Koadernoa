@@ -18,10 +18,12 @@
             android:id="@+id/note_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:text="Elementuko izenburua"
+            android:textColor="@color/dark_gray"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_gray"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/note_content"

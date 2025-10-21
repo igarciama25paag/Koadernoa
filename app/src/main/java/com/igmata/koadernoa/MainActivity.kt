@@ -1,12 +1,17 @@
 package com.igmata.koadernoa
 
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.setPadding
+import com.google.android.material.textfield.TextInputEditText
 import com.igmata.koadernoa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -39,7 +44,9 @@ class MainActivity : AppCompatActivity() {
     private fun createToolbar() {
         binding.newButton.setOnClickListener {
             val editText = EditText(this)
+            editText.setPadding(100,50,0,50)
             editText.hint = getString(R.string.new_note_dialog_hint)
+            editText.setSingleLine(true)
 
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.new_note_dialog_question))
@@ -47,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton(getString(R.string.dialog_create)) { dialog, _ ->
                     val name = editText.text.toString().trim()
                     if (name.isNotEmpty()) notesManager.goToNoteEditor(name, "", -1)
+                    else Toast.makeText(this, getString(R.string.note_no_title_message), Toast.LENGTH_LONG).show()
                 }
                 .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ ->
                     dialog.dismiss()
@@ -56,8 +64,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateCardView() {
-        try {
-            binding.recyclerView.adapter = NoteAdapter(notesManager.getJsonArray())
-        } catch (e: Exception) {  }
+        val array = notesManager.getJsonArray()
+        if(array.isEmpty()) {
+            binding.noNotesMessage.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+        } else
+            binding.noNotesMessage.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+            try {
+                binding.recyclerView.adapter = NoteAdapter(array)
+            } catch (e: Exception) {  }
     }
 }

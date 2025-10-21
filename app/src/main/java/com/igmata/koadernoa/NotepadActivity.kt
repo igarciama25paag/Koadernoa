@@ -1,6 +1,7 @@
 package com.igmata.koadernoa
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -61,18 +62,27 @@ class NotepadActivity : AppCompatActivity() {
         builder
             .setTitle("Notatik atera")
             .setPositiveButton(getString(R.string.dialog_exit)) { dialog, which ->
-                if(selectedOption == 0)
-                    if(id == -1)
-                        notesManager.addNewNote(binding.title.text.toString(), binding.noteContentEditor.text.toString())
-                    else
-                        notesManager.saveNote(id, binding.title.text.toString(), binding.noteContentEditor.text.toString())
-                finish()
+                if (selectedOption == 0)
+                    if(binding.title.text.toString().trim().isEmpty()) {
+                        Toast.makeText(this, getString(R.string.note_no_title_message), Toast.LENGTH_LONG).show()
+                    } else {
+                        if (id == -1)
+                            notesManager.addNewNote(binding.title.text.toString(), binding.noteContentEditor.text.toString())
+                        else
+                            notesManager.saveNote(id, binding.title.text.toString(), binding.noteContentEditor.text.toString())
+                        finish()
+                    }
+                else
+                    finish()
             }
             .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
                 dialog.dismiss()
             }
             .setSingleChoiceItems(
-                arrayOf(getString(R.string.dialog_option_exit_saving), getString(R.string.dialog_option_exit_not_saving)), selectedOption
+                arrayOf(
+                    getString(R.string.dialog_option_exit_saving),
+                    getString(R.string.dialog_option_exit_not_saving)
+                ), selectedOption
             ) { dialog, which ->
                 selectedOption = which
             }

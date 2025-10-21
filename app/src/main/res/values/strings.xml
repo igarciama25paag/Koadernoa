@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Koadernoa</string>
 
+    <string name="no_notes_message">Ez da notarik idatzi</string>
+
     <string name="dialog_create">Sortu</string>
     <string name="dialog_exit">Atera</string>
     <string name="dialog_cancel">Itxi</string>
@@ -8,6 +10,7 @@
     <string name="new_note_dialog_hint">Izena…</string>
     <string name="delete_note">Ezabatu</string>
     <string name="delete_toast">ezabatuta</string>
+    <string name="note_no_title_message">Izenburua ezin da utsik geratu</string>
 
     <string name="note_title_hint">Izenburua</string>
     <string name="note_content_hint">Notaren edukia…</string>
