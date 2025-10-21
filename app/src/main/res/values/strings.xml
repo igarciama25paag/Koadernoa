@@ -2,7 +2,16 @@
     <string name="app_name">Koadernoa</string>
 
     <string name="dialog_create">Sortu</string>
+    <string name="dialog_exit">Atera</string>
     <string name="dialog_cancel">Itxi</string>
     <string name="new_note_dialog_question">Sartu notaren izena</string>
     <string name="new_note_dialog_hint">Izena…</string>
+    <string name="delete_note">Ezabatu</string>
+
+    <string name="note_title_hint">Title</string>
+    <string name="note_content_hint">Note content…</string>
+
+    <string name="exit_dialog_title">Nota editoretik atera</string>
+    <string name="dialog_option_exit_saving">Atera eta gorde</string>
+    <string name="dialog_option_exit_not_saving">Atera gorde gabe</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.igmata.koadernoa
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.gson.Gson
 import com.igmata.koadernoa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -30,11 +29,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         notesManager = NotesManager(this)
 
-        toolBar()
+        createToolbar()
         updateCardView()
     }
 
-    fun toolBar() {
+    override fun onRestart() {
+        super.onRestart()
+        updateCardView()
+    }
+
+    private fun createToolbar() {
         binding.newButton.setOnClickListener {
             val editText = EditText(this)
             editText.hint = getString(R.string.new_note_dialog_hint)
@@ -44,10 +48,7 @@ class MainActivity : AppCompatActivity() {
                 .setView(editText)
                 .setPositiveButton(getString(R.string.dialog_create)) { dialog, _ ->
                     val name = editText.text.toString().trim()
-                    if (name.isNotEmpty()) {
-                        notesManager.addNewNote(name)
-                        updateCardView()
-                    }
+                    if (name.isNotEmpty()) goToNoteEditor(name, "", -1)
                 }
                 .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ ->
                     dialog.dismiss()
@@ -60,5 +61,13 @@ class MainActivity : AppCompatActivity() {
         try {
             binding.recyclerView.adapter = NoteAdapter(notesManager.getJsonArray())
         } catch (e: Exception) {  }
+    }
+
+    fun goToNoteEditor(title: String?, content: String?, id: Int) {
+        val intent = Intent(this, NotepadActivity::class.java)
+        intent.putExtra("title", title)
+        intent.putExtra("content", content)
+        intent.putExtra("id", id)
+        startActivity(intent)
     }
 }

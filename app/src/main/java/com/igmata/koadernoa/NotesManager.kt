@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 
 class NotesManager {
-    val context: Context
+    private val context: Context
 
     constructor(context: Context) {
         this.context = context
@@ -24,17 +24,16 @@ class NotesManager {
         return ArrayList(Gson().fromJson(json, Array<Note>::class.java).toList())
     }
 
-    fun saveJson(notes: ArrayList<Note>) {
+    private fun saveJson(notes: ArrayList<Note>) {
         context.openFileOutput("notes.json", Context.MODE_PRIVATE).use {
             it.write(Gson().toJson(notes).toByteArray())
         }
     }
 
-    fun addNewNote(name: String) {
+    fun addNewNote(title: String, content: String) {
         val notes = getJsonArrayList()
 
-        notes.add(Note(0, name, ""))
-        for (n in notes) n.id = notes.indexOf(n)
+        notes.add(Note( title, content))
 
         saveJson(notes)
     }
@@ -43,6 +42,23 @@ class NotesManager {
         val notes = getJsonArrayList()
 
         notes.remove(notes[id])
+
+        saveJson(notes)
+    }
+
+    fun saveNote(id: Int, title: String, content: String) {
+        val notes = getJsonArrayList()
+
+        notes[id].title = title
+        notes[id].content = content
+
+        saveJson(notes)
+    }
+
+    fun saveNote(id: Int, note: Note) {
+        val notes = getJsonArrayList()
+
+        notes[id] = note
 
         saveJson(notes)
     }
