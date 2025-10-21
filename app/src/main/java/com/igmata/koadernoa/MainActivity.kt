@@ -7,11 +7,8 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
-import com.google.android.material.textfield.TextInputEditText
 import com.igmata.koadernoa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
