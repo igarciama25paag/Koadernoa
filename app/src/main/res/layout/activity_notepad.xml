@@ -60,11 +60,14 @@
         android:layout_weight="1"
         android:fillViewport="true">
 
-        <jp.wasabeef.richeditor.RichEditor
+        <EditText
+            android:gravity="start"
             android:id="@+id/note_content_editor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white" />
+            android:hint="@string/note_content_hint"
+            android:background="@color/white"
+            android:inputType="textMultiLine" />
 
     </ScrollView>
 </LinearLayout>

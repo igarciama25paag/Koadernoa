@@ -38,10 +38,7 @@ class NotepadActivity : AppCompatActivity() {
     }
 
     private fun setupNoteContentEditor() {
-        binding.noteContentEditor.setEditorFontSize(18)
-        binding.noteContentEditor.setPlaceholder(getString(R.string.note_content_hint))
-
-        if(id != -1) binding.noteContentEditor.html = intent.getSerializableExtra("content") as String
+        if(id != -1) binding.noteContentEditor.setText(intent.getSerializableExtra("content") as String)
     }
 
     private fun setupBackPressedCallBack() {
@@ -66,9 +63,9 @@ class NotepadActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.dialog_exit)) { dialog, which ->
                 if(selectedOption == 0)
                     if(id == -1)
-                        notesManager.addNewNote(binding.title.text.toString(), binding.noteContentEditor.html)
+                        notesManager.addNewNote(binding.title.text.toString(), binding.noteContentEditor.text.toString())
                     else
-                        notesManager.saveNote(id, binding.title.text.toString(), binding.noteContentEditor.html)
+                        notesManager.saveNote(id, binding.title.text.toString(), binding.noteContentEditor.text.toString())
                 finish()
             }
             .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->

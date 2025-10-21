@@ -1,6 +1,7 @@
 package com.igmata.koadernoa
 
 import android.content.Context
+import android.content.Intent
 import com.google.gson.Gson
 
 class NotesManager {
@@ -33,7 +34,7 @@ class NotesManager {
     fun addNewNote(title: String, content: String) {
         val notes = getJsonArrayList()
 
-        notes.add(Note( title, content))
+        notes.add(Note(title, content))
 
         saveJson(notes)
     }
@@ -61,5 +62,13 @@ class NotesManager {
         notes[id] = note
 
         saveJson(notes)
+    }
+
+    fun goToNoteEditor(title: String?, content: String?, id: Int) {
+        val intent = Intent(context, NotepadActivity::class.java)
+        intent.putExtra("title", title)
+        intent.putExtra("content", content)
+        intent.putExtra("id", id)
+        context.startActivity(intent)
     }
 }

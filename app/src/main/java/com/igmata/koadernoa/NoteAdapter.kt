@@ -1,6 +1,5 @@
 package com.igmata.koadernoa
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ class NoteAdapter(private val note: Array<Note>) : RecyclerView.Adapter<NoteAdap
 
         viewHolder.background.setOnClickListener {
             val note = notesManager.getJsonArrayList()[position]
-            context.goToNoteEditor(note.title, note.content, position)
+            notesManager.goToNoteEditor(note.title, note.content, position)
         }
 
         viewHolder.background.setOnLongClickListener {
@@ -65,7 +64,7 @@ class NoteAdapter(private val note: Array<Note>) : RecyclerView.Adapter<NoteAdap
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_delete -> {
-                        Toast.makeText(context, "'${note[position].title.toString()}' deleted", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "'${note[position].title.toString()}' ${context.getString(R.string.delete_toast)}", Toast.LENGTH_LONG).show()
                         notesManager.deleteNote(position)
                         context.updateCardView()
                         true

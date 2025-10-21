@@ -1,9 +1,7 @@
 package com.igmata.koadernoa
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,8 +32,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRestart() {
-        super.onRestart()
         updateCardView()
+        super.onRestart()
     }
 
     private fun createToolbar() {
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 .setView(editText)
                 .setPositiveButton(getString(R.string.dialog_create)) { dialog, _ ->
                     val name = editText.text.toString().trim()
-                    if (name.isNotEmpty()) goToNoteEditor(name, "", -1)
+                    if (name.isNotEmpty()) notesManager.goToNoteEditor(name, "", -1)
                 }
                 .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ ->
                     dialog.dismiss()
@@ -61,13 +59,5 @@ class MainActivity : AppCompatActivity() {
         try {
             binding.recyclerView.adapter = NoteAdapter(notesManager.getJsonArray())
         } catch (e: Exception) {  }
-    }
-
-    fun goToNoteEditor(title: String?, content: String?, id: Int) {
-        val intent = Intent(this, NotepadActivity::class.java)
-        intent.putExtra("title", title)
-        intent.putExtra("content", content)
-        intent.putExtra("id", id)
-        startActivity(intent)
     }
 }
