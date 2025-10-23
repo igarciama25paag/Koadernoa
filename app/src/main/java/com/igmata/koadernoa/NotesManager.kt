@@ -3,30 +3,34 @@ package com.igmata.koadernoa
 import android.content.Context
 import android.content.Intent
 import com.google.gson.Gson
+import java.io.File
 
 class NotesManager {
     private val context: Context
+    private val fileName: String = "notes.json"
 
     constructor(context: Context) {
         this.context = context
+        var file = File(context.filesDir, fileName)
+        if(!file.exists()) file.writeText("[]")
     }
 
     fun getJsonArray(): Array<Note> {
-        val json = context.openFileInput("notes.json")
+        val json = context.openFileInput(fileName)
             .bufferedReader()
             .use { it.readText() }
         return Gson().fromJson(json, Array<Note>::class.java)
     }
 
     fun getJsonArrayList(): ArrayList<Note> {
-        val json = context.openFileInput("notes.json")
+        val json = context.openFileInput(fileName)
             .bufferedReader()
             .use { it.readText() }
         return ArrayList(Gson().fromJson(json, Array<Note>::class.java).toList())
     }
 
     private fun saveJson(notes: ArrayList<Note>) {
-        context.openFileOutput("notes.json", Context.MODE_PRIVATE).use {
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
             it.write(Gson().toJson(notes).toByteArray())
         }
     }
