@@ -65,11 +65,13 @@ class MainActivity : AppCompatActivity() {
         if(array.isEmpty()) {
             binding.noNotesMessage.visibility = View.VISIBLE
             binding.recyclerView.visibility = View.GONE
-        } else
+        } else {
             binding.noNotesMessage.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
             try {
                 binding.recyclerView.adapter = NoteAdapter(array)
-            } catch (e: Exception) {  }
+            } catch (e: Exception) {
+            }
+        }
     }
 }
