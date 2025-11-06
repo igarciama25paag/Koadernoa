@@ -1,15 +1,24 @@
 package com.igmata.koadernoa
 
+import android.graphics.drawable.Icon
 import android.os.Bundle
-import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.igmata.koadernoa.databinding.ActivityMainBinding
+import com.igmata.koadernoa.fragment.AudiosFragment
+import com.igmata.koadernoa.fragment.NotesFragment
+import com.igmata.koadernoa.util.NotesManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,49 +38,61 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         notesManager = NotesManager(this)
 
-        createToolbar()
-        updateCardView()
+        buildNoteButton()
+        createPager()
     }
 
     override fun onRestart() {
-        updateCardView()
+        createPager()
         super.onRestart()
     }
 
-    private fun createToolbar() {
+    private fun buildNoteButton() {
+        binding.newButton.setImageResource(R.drawable.ic_new_note)
         binding.newButton.setOnClickListener {
-            val editText = EditText(this)
-            editText.setPadding(100,50,0,50)
-            editText.hint = getString(R.string.new_note_dialog_hint)
-            editText.setSingleLine(true)
-
-            AlertDialog.Builder(this)
-                .setTitle(getString(R.string.new_note_dialog_question))
-                .setView(editText)
-                .setPositiveButton(getString(R.string.dialog_create)) { dialog, _ ->
-                    val name = editText.text.toString().trim()
-                    if (name.isNotEmpty()) notesManager.goToNoteEditor(name, "", -1)
-                    else Toast.makeText(this, getString(R.string.note_no_title_message), Toast.LENGTH_LONG).show()
-                }
-                .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+            notesManager.goToNewNoteEditor(getString(R.string.note_default_title), "")
         }
     }
 
-    fun updateCardView() {
-        val array = notesManager.getJsonArray()
-        if(array.isEmpty()) {
-            binding.noNotesMessage.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
-        } else {
-            binding.noNotesMessage.visibility = View.GONE
-            binding.recyclerView.visibility = View.VISIBLE
-            try {
-                binding.recyclerView.adapter = NoteAdapter(array)
-            } catch (e: Exception) {
+    private fun buildAudioButton() {
+        binding.newButton.setImageResource(R.drawable.ic_new_audio)
+        binding.newButton.setOnClickListener {
+
+        }
+    }
+
+    private fun createPager() {
+        binding.pager.adapter = ScreenSlidePagerAdapter(this)
+
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            when (position) {
+                0 -> tab.icon = AppCompatResources.getDrawable(this, R.drawable.ic_notes)
+                else -> tab.icon = AppCompatResources.getDrawable(this, R.drawable.ic_audios)
             }
+        }.attach()
+
+        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                when(position) {
+                    0 -> {
+                        binding.fragmentSubtitle.text = getString(R.string.fragment_notes_title)
+                        buildNoteButton()
+                    }
+                    else -> {
+                        binding.fragmentSubtitle.text = getString(R.string.fragment_audios_title)
+                        buildAudioButton()
+                    }
+                }
+            }
+        })
+    }
+
+    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = 2
+
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> NotesFragment()
+            else -> AudiosFragment()
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.igmata.koadernoa.databinding.ActivityNotepadBinding
+import com.igmata.koadernoa.util.NotesManager
 
 
 class NotepadActivity : AppCompatActivity() {

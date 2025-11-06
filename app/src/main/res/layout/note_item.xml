@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="24dp"
     app:cardElevation="4dp">
 
@@ -11,8 +14,7 @@
         android:id="@+id/note_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:background="?attr/selectableItemBackground">
+        android:layout_margin="12dp">
 
         <TextView
             android:id="@+id/note_title"
