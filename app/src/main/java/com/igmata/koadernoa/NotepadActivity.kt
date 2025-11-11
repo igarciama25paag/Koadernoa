@@ -11,25 +11,21 @@ import androidx.core.view.WindowInsetsCompat
 import com.igmata.koadernoa.databinding.ActivityNotepadBinding
 import com.igmata.koadernoa.util.NotesManager
 
-
 class NotepadActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotepadBinding
-    private lateinit var notesManager: NotesManager
+    private val notesManager by lazy { NotesManager(this) }
     private var id: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_notepad)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivityNotepadBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        binding = ActivityNotepadBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        notesManager = NotesManager(this)
 
         id = intent.getSerializableExtra("id") as Int
         binding.title.setText(intent.getSerializableExtra("title") as String)

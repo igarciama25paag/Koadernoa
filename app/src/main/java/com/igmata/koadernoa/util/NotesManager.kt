@@ -8,18 +8,18 @@ import java.io.File
 
 private const val NOTES_FILE = "notes.json"
 
-class NotesManager {
+class NotesManager(
     private val context: Context
+) {
     data class Note(var title: String, var content: String?)
     class UnexistingNoteException(message: String) : Exception(message)
 
-    private fun interface BetweenLoadAndSave {
-        fun inBetween(notes: ArrayList<Note>)
+    init {
+        ensureFileExistence()
     }
 
-    constructor(context: Context) {
-        this.context = context
-        ensureFileExistence()
+    private fun interface BetweenLoadAndSave {
+        fun inBetween(notes: ArrayList<Note>)
     }
 
     private fun ensureFileExistence() {
@@ -39,6 +39,8 @@ class NotesManager {
         return ArrayList(getNotesArray().toList())
     }
 
+    /**Notes Manging**/
+
     private fun saveNotes(notes: ArrayList<Note>) {
         ensureFileExistence()
         context.openFileOutput(NOTES_FILE, Context.MODE_PRIVATE).use {
@@ -46,39 +48,39 @@ class NotesManager {
         }
     }
 
-    private fun betweenLoadAndSave(between: BetweenLoadAndSave) {
+    private fun loadAndSave(between: BetweenLoadAndSave) {
         val notes = getNotesArrayList()
         between.inBetween(notes)
         saveNotes(notes)
     }
 
     fun addNewNote(title: String, content: String) {
-        betweenLoadAndSave { notes ->
+        loadAndSave { notes ->
             notes.add(Note(title, content))
         }
     }
 
     fun addNewNote(note: Note) {
-        betweenLoadAndSave { notes ->
+        loadAndSave { notes ->
             notes.add(note)
         }
     }
 
     fun deleteNote(id: Int) {
-        betweenLoadAndSave { notes ->
+        loadAndSave { notes ->
             notes.remove(notes[id])
         }
     }
 
     fun saveNote(id: Int, title: String, content: String) {
-        betweenLoadAndSave { notes ->
+        loadAndSave { notes ->
             notes[id].title = title
             notes[id].content = content
         }
     }
 
     fun saveNote(id: Int, note: Note) {
-        betweenLoadAndSave { notes ->
+        loadAndSave { notes ->
             notes[id] = note
         }
     }

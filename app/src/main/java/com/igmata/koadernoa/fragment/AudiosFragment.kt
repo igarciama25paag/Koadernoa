@@ -6,19 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.igmata.koadernoa.databinding.FragmentAudiosBinding
+import com.igmata.koadernoa.util.AudioPlayer
 import com.igmata.koadernoa.util.AudiosManager
 
 class AudiosFragment : Fragment(), AudiosAdapter.OnAudioActionListener {
 
     private lateinit var binding: FragmentAudiosBinding
-    private lateinit var audiosManager: AudiosManager
+    private val audiosManager by lazy { AudiosManager(binding.root.context) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAudiosBinding.inflate(inflater, container, false)
-        audiosManager = AudiosManager(binding.root.context)
         createRecycleView()
         return binding.root
     }

@@ -54,4 +54,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("jp.wasabeef:richeditor-android:2.0.0")
+    implementation("io.github.gautamchibde:audiovisualizer:2.2.5")
 }
