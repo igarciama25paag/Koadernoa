@@ -19,15 +19,18 @@ class AudiosManager(
 ) {
     data class Audio(var title: String, val duration: String?, val file: File)
     private val audiosDirectory by lazy { context.getDir(AUDIOS_DIRECTORY_NAME, Context.MODE_PRIVATE) }
+    lateinit var currentFile: File
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
 
     init {
         ensureFileExistence()
+        newAudioFile()
     }
 
     private fun ensureFileExistence() {
-        if(!audiosDirectory.exists()) audiosDirectory.mkdir()
+        if(!audiosDirectory.exists())
+            audiosDirectory.mkdirs()
     }
 
     fun getAudiosArrayList(): ArrayList<Audio>  {
@@ -50,10 +53,11 @@ class AudiosManager(
     fun goToNewAudioRecorder() = context.startActivity(Intent(context, AudioRecorderActivity::class.java))
 
     fun newAudioFile(): File {
-        return File(NEW_AUDIO_FILE_NAME)
+        currentFile = File(context.filesDir, NEW_AUDIO_FILE_NAME)
+        return currentFile
     }
 
-    fun saveNewAudio() {
+    fun saveCurrentAudioFile() {
 
     }
 
@@ -65,12 +69,12 @@ class AudiosManager(
         else MediaRecorder()
     }
 
-    fun startRecorder(outputFile: File) {
+    fun startRecorder() {
         createRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(FileOutputStream(outputFile).fd)
+            setOutputFile(FileOutputStream(currentFile).fd)
 
             prepare()
             start()
@@ -85,6 +89,13 @@ class AudiosManager(
         recorder = null
     }
 
+    fun startPlayer() {
+        MediaPlayer.create(context, currentFile.toUri()).apply {
+            player = this
+            start()
+        }
+    }
+
     fun startPlayer(file: File) {
         MediaPlayer.create(context, file.toUri()).apply {
             player = this
@@ -96,5 +107,16 @@ class AudiosManager(
         player?.stop()
         player?.release()
         player = null
+    }
+
+    fun getMediaPlayer() = player!!
+
+    fun isPlaying(): Boolean {
+        return if(player == null) false
+        else player!!.isPlaying
+    }
+
+    fun setOnCompletionListener(ocl: MediaPlayer.OnCompletionListener) {
+        player?.setOnCompletionListener(ocl)
     }
 }

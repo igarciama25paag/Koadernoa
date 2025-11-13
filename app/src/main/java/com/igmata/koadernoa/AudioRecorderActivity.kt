@@ -1,6 +1,8 @@
 package com.igmata.koadernoa
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,7 +16,6 @@ class AudioRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioRecorderBinding
     private lateinit var timerJob: Job
     private val audiosManager by lazy { AudiosManager(this) }
-    private val newAudioFile by lazy { audiosManager.newAudioFile() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +28,11 @@ class AudioRecorderActivity : AppCompatActivity() {
             insets
         }
 
-        audiosManager.startRecorder(newAudioFile)
+        audiosManager.startRecorder()
         startTimer()
         //createAudioVisualizer()
         createStopButton()
+        createPlayButton()
     }
 
     private fun startTimer() {
@@ -56,11 +58,27 @@ class AudioRecorderActivity : AppCompatActivity() {
         binding.stopButton.setOnClickListener {
             timerJob.cancel()
             audiosManager.stopRecorder()
-            swapButton()
+            binding.stopButton.visibility = View.GONE
+            binding.playButton.visibility = View.VISIBLE
+            binding.audioVisualizer.visibility = View.VISIBLE
+            binding.audioVisualizer.setColor(getColor(R.color.orange))
+            binding.audioVisualizer.setDensity(20f)
         }
     }
 
-    private fun swapButton() {
-
+    private fun createPlayButton() {
+        binding.playButton.setOnClickListener {
+            if(audiosManager.isPlaying()) {
+                binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
+                audiosManager.stopPlayer()
+            } else {
+                binding.playButtonImage.setImageResource(R.drawable.ic_stop_audio)
+                audiosManager.startPlayer()
+                binding.audioVisualizer.setPlayer(audiosManager.getMediaPlayer().audioSessionId)
+                audiosManager.setOnCompletionListener {
+                    binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
+                }
+            }
+        }
     }
 }

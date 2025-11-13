@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.igmata.koadernoa.databinding.FragmentAudiosBinding
-import com.igmata.koadernoa.util.AudioPlayer
 import com.igmata.koadernoa.util.AudiosManager
 
 class AudiosFragment : Fragment(), AudiosAdapter.OnAudioActionListener {

@@ -14,13 +14,16 @@
         android:theme="@style/Theme.Koadernoa">
         <activity
             android:name=".AudioRecorderActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".NotepadActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
