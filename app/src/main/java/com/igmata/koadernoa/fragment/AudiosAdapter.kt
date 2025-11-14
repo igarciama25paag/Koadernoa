@@ -22,7 +22,6 @@ class AudiosAdapter(private val audio: ArrayList<AudiosManager.Audio>, private v
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.audio_title)
         val duration: TextView = view.findViewById(R.id.audio_duration)
-        val play: CardView = view.findViewById(R.id.audio_button)
     }
 
     override fun onCreateViewHolder(
@@ -46,8 +45,8 @@ class AudiosAdapter(private val audio: ArrayList<AudiosManager.Audio>, private v
         val s = audio[position].duration
         holder.duration.text = String.format("%02d:%02d", s/60, s%60)
 
-        holder.play.setOnClickListener {
-
+        holder.itemView.setOnClickListener {
+            audiosManager.goToNewAudioRecorder(audio[position])
         }
 
         holder.itemView.setOnLongClickListener {

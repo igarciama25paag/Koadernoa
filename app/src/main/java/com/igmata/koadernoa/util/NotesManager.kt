@@ -80,21 +80,21 @@ class NotesManager(
     }
 
     fun goToNewNoteEditor(title: String?, content: String?) {
-        val intent = Intent(context, NotepadActivity::class.java)
-        intent.putExtra("title", title)
-        intent.putExtra("content", content)
-        intent.putExtra("id", -1)
-        context.startActivity(intent)
+        context.startActivity(Intent(context, NotepadActivity::class.java).also {
+            it.putExtra("title", title)
+            it.putExtra("content", content)
+            it.putExtra("id", -1)
+        })
     }
 
     fun goToExistingNoteEditor(id: Int) {
         val notes = getNotesArray()
         if(0 <= id && id < notes.size) {
-            val intent = Intent(context, NotepadActivity::class.java)
-            intent.putExtra("title", notes[id].title)
-            intent.putExtra("content", notes[id].content)
-            intent.putExtra("id", id)
-            context.startActivity(intent)
+            context.startActivity(Intent(context, NotepadActivity::class.java).also {
+                it.putExtra("title", notes[id].title)
+                it.putExtra("content", notes[id].content)
+                it.putExtra("id", id)
+            })
         } else
             throw UnexistingNoteException("Tried reaching unexisting Note $id")
     }

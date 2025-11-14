@@ -12,10 +12,14 @@ import androidx.core.view.WindowInsetsCompat
 import com.igmata.koadernoa.databinding.ActivityAudioRecorderBinding
 import com.igmata.koadernoa.util.AudiosManager
 import kotlinx.coroutines.*
+import java.io.File
 
 class AudioRecorderActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioRecorderBinding
+    private val audioFile by lazy {
+        intent.getSerializableExtra("file") as File?
+    }
     private lateinit var timerJob: Job
     private var s = 0
     private val audiosManager by lazy { AudiosManager(this) }
@@ -31,10 +35,18 @@ class AudioRecorderActivity : AppCompatActivity() {
             insets
         }
 
-        audiosManager.startRecorder()
-        startTimer()
-        setupStopButton()
-        setupPlayButton()
+        if(audioFile == null) {
+            audiosManager.startRecorder()
+            startTimer()
+            setupStopButton()
+        } else {
+            audiosManager.defaultFile = audioFile!!
+            binding.title.setText(audioFile!!.nameWithoutExtension)
+            s = intent.getSerializableExtra("duration") as Int
+            binding.timer.text = String.format("%02d:%02d", s / 60, s % 60)
+            stopPlaying()
+            swapToPlayButton()
+        }
         setupExitButton()
         setupBackPressedCallBack()
     }
@@ -43,9 +55,7 @@ class AudioRecorderActivity : AppCompatActivity() {
         timerJob = CoroutineScope(Dispatchers.Main).launch {
             while (isActive && s < 3600) {
                 s++
-                val minutes = s / 60
-                val seconds = s % 60
-                String.format("%02d:%02d", minutes, seconds).also { binding.timer.text = it }
+                binding.timer.text = String.format("%02d:%02d", s / 60, s % 60)
                 delay(1000)
             }
             tooLongAudio()
@@ -65,30 +75,36 @@ class AudioRecorderActivity : AppCompatActivity() {
 
     private fun stopRecording() {
         timerJob.cancel()
+        swapToPlayButton()
         audiosManager.stopRecorder()
+    }
 
+    private fun swapToPlayButton() {
         binding.stopButton.visibility = View.GONE
         binding.playButton.visibility = View.VISIBLE
 
         binding.audioVisualizer.visibility = View.VISIBLE
         binding.audioVisualizer.setColor(getColor(R.color.orange))
         binding.audioVisualizer.setDensity(20f)
+
+        binding.playButton.setOnClickListener {
+            if(audiosManager.isPlaying()) stopPlaying()
+            else startPlaying()
+        }
     }
 
-    private fun setupPlayButton() {
-        binding.playButton.setOnClickListener {
-            if(audiosManager.isPlaying()) {
-                binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
-                audiosManager.stopPlayer()
-            } else {
-                binding.playButtonImage.setImageResource(R.drawable.ic_stop_audio)
-                audiosManager.startPlayer()
-                binding.audioVisualizer.setPlayer(audiosManager.getMediaPlayer().audioSessionId)
-                audiosManager.setOnCompletionListener {
-                    binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
-                }
-            }
+    private fun startPlaying() {
+        binding.playButtonImage.setImageResource(R.drawable.ic_stop_audio)
+        audiosManager.startPlayer()
+        binding.audioVisualizer.setPlayer(audiosManager.getMediaPlayer().audioSessionId)
+        audiosManager.setOnCompletionListener {
+            binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
         }
+    }
+
+    private fun stopPlaying() {
+        binding.playButtonImage.setImageResource(R.drawable.ic_play_audio)
+        audiosManager.stopPlayer()
     }
 
     private fun setupBackPressedCallBack() {

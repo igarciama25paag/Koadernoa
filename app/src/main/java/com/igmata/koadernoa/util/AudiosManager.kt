@@ -24,9 +24,7 @@ class AudiosManager(
             if(!it.exists()) it.mkdirs()
         }
     }
-    private val defaultFile by lazy {
-        File(context.filesDir, DEFAULT_FILE_NAME)
-    }
+    var defaultFile: File = File(context.filesDir, DEFAULT_FILE_NAME)
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
 
@@ -36,7 +34,7 @@ class AudiosManager(
         val audios = ArrayList<Audio>()
         for (file in files) {
             val mmr = MediaMetadataRetriever().also {
-                it.setDataSource(file.path)
+                it.setDataSource(FileInputStream(file).fd)
             }
             audios.add(Audio(
                 file.nameWithoutExtension,
@@ -48,7 +46,18 @@ class AudiosManager(
         return audios
     }
 
-    fun goToNewAudioRecorder() = context.startActivity(Intent(context, AudioRecorderActivity::class.java))
+    fun goToNewAudioRecorder(audio: Audio?) {
+        context.startActivity(Intent(context, AudioRecorderActivity::class.java).also {
+            var file = null as File?
+            var duration = 0
+            if(audio != null) {
+                file = audio.file
+                duration = audio.duration
+            }
+            it.putExtra("file", file)
+            it.putExtra("duration", duration)
+        })
+    }
 
     fun saveDefaultAudioFile(name: String) {
         File(audiosDirectory, "$name.mp3").outputStream().use { out ->
@@ -90,13 +99,6 @@ class AudiosManager(
 
     fun startPlayer() {
         MediaPlayer.create(context, defaultFile.toUri()).apply {
-            player = this
-            start()
-        }
-    }
-
-    fun startPlayer(file: File) {
-        MediaPlayer.create(context, file.toUri()).apply {
             player = this
             start()
         }

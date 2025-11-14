@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     this,
                     Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED)
-                audiosManager.goToNewAudioRecorder()
+                audiosManager.goToNewAudioRecorder(null)
             else
                 ActivityCompat.requestPermissions(
                     this,
