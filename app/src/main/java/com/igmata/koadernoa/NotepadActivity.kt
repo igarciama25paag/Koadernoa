@@ -30,9 +30,9 @@ class NotepadActivity : AppCompatActivity() {
         id = intent.getSerializableExtra("id") as Int
         binding.title.setText(intent.getSerializableExtra("title") as String)
 
-        setupBackPressedCallBack()
         setupNoteContentEditor()
         setupExitButton()
+        setupBackPressedCallBack()
     }
 
     private fun setupNoteContentEditor() {
@@ -57,11 +57,11 @@ class NotepadActivity : AppCompatActivity() {
         var selectedOption = 0
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder
-            .setTitle("Notatik atera")
+            .setTitle(getString(R.string.note_exit_dialog_title))
             .setPositiveButton(getString(R.string.dialog_exit)) { dialog, which ->
                 if (selectedOption == 0)
                     if(binding.title.text.toString().trim().isEmpty()) {
-                        Toast.makeText(this, getString(R.string.note_no_title_message), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.no_title_message), Toast.LENGTH_LONG).show()
                     } else {
                         if (id == -1)
                             notesManager.addNewNote(binding.title.text.toString(), binding.noteContentEditor.text.toString())
@@ -69,8 +69,7 @@ class NotepadActivity : AppCompatActivity() {
                             notesManager.saveNote(id, binding.title.text.toString(), binding.noteContentEditor.text.toString())
                         finish()
                     }
-                else
-                    finish()
+                else finish()
             }
             .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
                 dialog.dismiss()

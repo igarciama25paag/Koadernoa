@@ -53,8 +53,8 @@ class NotesAdapter(private val note: ArrayList<NotesManager.Note>, private val l
         }
     }
 
-    private fun noteLongClickListener(context: Context, viewHolder: ViewHolder, position: Int, notesManager: NotesManager): Boolean {
-        val popupMenu = PopupMenu(context, viewHolder.itemView)
+    private fun noteLongClickListener(context: Context, holder: ViewHolder, position: Int, notesManager: NotesManager): Boolean {
+        val popupMenu = PopupMenu(context, holder.itemView)
         popupMenu.inflate(R.menu.note_popup_menu)
 
         // Force icons on menu to appear

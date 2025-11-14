@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints="name"
                 android:ellipsize="end"
-                android:hint="@string/note_title_hint"
+                android:hint="@string/title_hint"
                 android:inputType="text"
                 android:singleLine="true"
                 android:textColor="@color/dark_gray"

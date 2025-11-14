@@ -12,12 +12,15 @@
     <string name="note_default_title">Nota berria</string>
     <string name="delete_note">Ezabatu</string>
     <string name="delete_toast">ezabatu da</string>
-    <string name="note_no_title_message">Izenburua ezin da utsik geratu</string>
+    <string name="title_hint">Izenburua</string>
+    <string name="no_title_message">Izenburua ezin da utsik geratu</string>
 
-    <string name="note_title_hint">Izenburua</string>
     <string name="note_content_hint">Notaren edukia…</string>
+    <string name="note_exit_dialog_title">Nota editoretik atera</string>
 
-    <string name="exit_dialog_title">Nota editoretik atera</string>
+    <string name="audio_exit_dialog_title">Grabaziotik atera</string>
+    <string name="audio_time_limit_reached">Grabaketa denbora muga gaindituta</string>
+
     <string name="dialog_option_exit_saving">Atera eta gorde</string>
     <string name="dialog_option_exit_not_saving">Atera gorde gabe</string>
 </resources>

@@ -9,40 +9,38 @@ import android.os.Build
 import androidx.core.net.toUri
 import com.igmata.koadernoa.AudioRecorderActivity
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 
 private const val AUDIOS_DIRECTORY_NAME = "audios"
-private const val NEW_AUDIO_FILE_NAME = "recording_audio.mp3"
+private const val DEFAULT_FILE_NAME = "recording_audio.mp3"
 
 class AudiosManager(
     private val context: Context
 ) {
-    data class Audio(var title: String, val duration: String?, val file: File)
-    private val audiosDirectory by lazy { context.getDir(AUDIOS_DIRECTORY_NAME, Context.MODE_PRIVATE) }
-    lateinit var currentFile: File
+    data class Audio(var title: String, val duration: Int, val file: File)
+    private val audiosDirectory by lazy {
+        context.getDir(AUDIOS_DIRECTORY_NAME, Context.MODE_PRIVATE).also {
+            if(!it.exists()) it.mkdirs()
+        }
+    }
+    private val defaultFile by lazy {
+        File(context.filesDir, DEFAULT_FILE_NAME)
+    }
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
-
-    init {
-        ensureFileExistence()
-        newAudioFile()
-    }
-
-    private fun ensureFileExistence() {
-        if(!audiosDirectory.exists())
-            audiosDirectory.mkdirs()
-    }
 
     fun getAudiosArrayList(): ArrayList<Audio>  {
         val files = audiosDirectory.listFiles()
         if(files == null) return ArrayList()
         val audios = ArrayList<Audio>()
         for (file in files) {
-            val mmr = MediaMetadataRetriever()
-            mmr.setDataSource(file.path)
+            val mmr = MediaMetadataRetriever().also {
+                it.setDataSource(file.path)
+            }
             audios.add(Audio(
-                file.name,
-                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION),
+                file.nameWithoutExtension,
+                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toInt() / 1000,
                 file)
             )
             mmr.release()
@@ -52,13 +50,14 @@ class AudiosManager(
 
     fun goToNewAudioRecorder() = context.startActivity(Intent(context, AudioRecorderActivity::class.java))
 
-    fun newAudioFile(): File {
-        currentFile = File(context.filesDir, NEW_AUDIO_FILE_NAME)
-        return currentFile
+    fun saveDefaultAudioFile(name: String) {
+        File(audiosDirectory, "$name.mp3").outputStream().use { out ->
+            FileInputStream(defaultFile).copyTo(out)
+        }
     }
 
-    fun saveCurrentAudioFile() {
-
+    fun deleteAudio(audioFile: File) {
+        audioFile.delete()
     }
 
     /**Recorder and Player**/
@@ -74,7 +73,7 @@ class AudiosManager(
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(FileOutputStream(currentFile).fd)
+            setOutputFile(FileOutputStream(defaultFile).fd)
 
             prepare()
             start()
@@ -90,7 +89,7 @@ class AudiosManager(
     }
 
     fun startPlayer() {
-        MediaPlayer.create(context, currentFile.toUri()).apply {
+        MediaPlayer.create(context, defaultFile.toUri()).apply {
             player = this
             start()
         }

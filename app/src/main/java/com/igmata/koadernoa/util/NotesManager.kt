@@ -6,30 +6,25 @@ import com.google.gson.Gson
 import com.igmata.koadernoa.NotepadActivity
 import java.io.File
 
-private const val NOTES_FILE = "notes.json"
+private const val NOTES_FILE_NAME = "notes.json"
 
 class NotesManager(
     private val context: Context
 ) {
     data class Note(var title: String, var content: String?)
     class UnexistingNoteException(message: String) : Exception(message)
-
-    init {
-        ensureFileExistence()
+    private val notesFile by lazy {
+        File(context.filesDir, NOTES_FILE_NAME).also {
+            if(!it.exists()) it.writeText("[]")
+        }
     }
 
     private fun interface BetweenLoadAndSave {
         fun inBetween(notes: ArrayList<Note>)
     }
 
-    private fun ensureFileExistence() {
-        val file = File(context.filesDir, NOTES_FILE)
-        if(!file.exists()) file.writeText("[]")
-    }
-
     fun getNotesArray(): Array<Note> {
-        ensureFileExistence()
-        val json = context.openFileInput(NOTES_FILE)
+        val json = notesFile
             .bufferedReader()
             .use { it.readText() }
         return Gson().fromJson(json, Array<Note>::class.java)
@@ -39,11 +34,10 @@ class NotesManager(
         return ArrayList(getNotesArray().toList())
     }
 
-    /**Notes Manging**/
+    /**Notes Managing**/
 
     private fun saveNotes(notes: ArrayList<Note>) {
-        ensureFileExistence()
-        context.openFileOutput(NOTES_FILE, Context.MODE_PRIVATE).use {
+        notesFile.outputStream().use {
             it.write(Gson().toJson(notes).toByteArray())
         }
     }
