@@ -65,6 +65,10 @@ class AudiosManager(
         }
     }
 
+    fun renameAudioFile(oldFile: File, name: String) {
+        oldFile.renameTo(File(audiosDirectory, "$name.mp3"))
+    }
+
     fun deleteAudio(audioFile: File) {
         audioFile.delete()
     }

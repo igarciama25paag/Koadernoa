@@ -74,7 +74,7 @@ class AudioRecorderActivity : AppCompatActivity() {
     }
 
     private fun stopRecording() {
-        timerJob.cancel()
+        if(::timerJob.isInitialized) timerJob.cancel()
         swapToPlayButton()
         audiosManager.stopRecorder()
     }
@@ -132,7 +132,10 @@ class AudioRecorderActivity : AppCompatActivity() {
                         Toast.makeText(this, getString(R.string.no_title_message), Toast.LENGTH_LONG).show()
                     } else {
                         stopRecording()
-                        audiosManager.saveDefaultAudioFile(binding.title.text.toString())
+                        if(audioFile == null)
+                            audiosManager.saveDefaultAudioFile(binding.title.text.toString())
+                        else
+                            audiosManager.renameAudioFile(audiosManager.defaultFile, binding.title.text.toString())
                         finish()
                     }
                 } else {
